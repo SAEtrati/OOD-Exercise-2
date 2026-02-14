@@ -20,5 +20,29 @@ public class Main {
         Logger logger = new ConsoleLogger();
         TicketFactory factory = new TicketFactory();
         AssignStrategy assignStrategy = new DefaultAssignStrategy();
+
+        // --- Scenario 1: Bug report from WEB, response via Email ---
+        System.out.println("=== Scenario 1: Web Bug Report ===");
+        InputHandlerStrategy webHandler = new WebInputHandler();
+        ResponseStrategy emailResponse = new EmailResponseStrategy();
+
+        TicketingFacade webFacade = new TicketingFacade(
+                webHandler, factory, assignStrategy, emailResponse, logger
+        );
+        Ticket ticket1 = webFacade.process("I see a very very very BAD BUG :/", Channel.WEB);
+        System.out.println("Final: " + ticket1.getSummary());
+
+        System.out.println();
+
+        // --- Scenario 2: Request from EMAIL, response via SMS ---
+        System.out.println("=== Scenario 2: Email Support Request ===");
+        InputHandlerStrategy emailHandler = new EmailInputHandler();
+        ResponseStrategy smsResponse = new SmsResponseStrategy();
+
+        TicketingFacade emailFacade = new TicketingFacade(
+                emailHandler, factory, assignStrategy, smsResponse, logger
+        );
+        Ticket ticket2 = emailFacade.process("I need help with my account.", Channel.EMAIL);
+        System.out.println("Final: " + ticket2.getSummary());
     }
 }
